@@ -1,8 +1,8 @@
 import { EditTaskFormEntity } from 'domains/index';
 
 export const DEFAULT_VALUES: EditTaskFormEntity = {
-  taskName: '',
-  taskDescription: '',
+  name: '',
+  info: '',
   isImportant: false,
   isDone: false,
 };

@@ -1,7 +1,6 @@
-import { action, computed, makeObservable, observable, reaction } from 'mobx';
-import { useParams } from 'react-router-dom';
+import { computed, makeObservable, observable, reaction } from 'mobx';
 import { TaskAgentInstance } from 'http/index';
-import { mapToInternalTaskEdit } from 'helpers/index';
+import { mapToExternalTask, mapToInternalTaskEdit } from 'helpers/index';
 import { EditTaskFormEntity, TaskEntity } from 'domains/index';
 
 type PrivateFields = '_isLoading' | '_taskId' | '_task';
@@ -17,20 +16,21 @@ export class EditTaskStore {
       taskId: computed,
       isLoading: computed,
 
-      changeTaskImportant: action,
-      changeTaskCompleted: action,
+      // getTask: action,
+      // updateTask: action,
     });
 
     reaction(
       () => this.taskId,
-      (): void => {
-        this.getTask(this.taskId);
+      async (): Promise<void> => {
+        this._task = await this.getTask(this.taskId);
+        this._isLoading = false;
       }
     );
   }
-  private _isLoading = false;
+  private _isLoading = true;
   private _taskId = '0';
-  private _task: EditTaskFormEntity | null = null;
+  private _task: TaskEntity | null = null;
   get isLoading(): boolean {
     return this._isLoading;
   }
@@ -40,20 +40,23 @@ export class EditTaskStore {
   set taskId(id) {
     this._taskId = id;
   }
-  get task(): EditTaskFormEntity | null {
+  get task(): TaskEntity | null {
     return this._task;
   }
-  changeTaskImportant = (taskId: TaskEntity['id'], currentStatus: boolean) => {
-    console.log('imporant', taskId, !currentStatus);
-  };
-  changeTaskCompleted = (taskId: TaskEntity['id'], currentStatus: boolean) => {
-    console.log('completed', taskId, !currentStatus);
-  };
-
   getTask = async (taskId: string) => {
     const res = await TaskAgentInstance.getTask(taskId);
-    console.log(mapToInternalTaskEdit(res));
-    return { task: mapToInternalTaskEdit(res) };
+    return mapToInternalTaskEdit(res);
+  };
+
+  updateTask = async (task: EditTaskFormEntity) => {
+    this._isLoading = true;
+    try {
+      await TaskAgentInstance.updateTask(this._taskId, mapToExternalTask(task));
+    } catch {
+      alert('ERROR');
+    } finally {
+      this._isLoading = false;
+    }
   };
 }
 

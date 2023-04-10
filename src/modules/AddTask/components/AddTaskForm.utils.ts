@@ -4,4 +4,5 @@ export const DEFAULT_VALUES: AddTaskForm = {
   taskname: '',
   taskdescription: '',
   isImportant: false,
+  isDone: false,
 };

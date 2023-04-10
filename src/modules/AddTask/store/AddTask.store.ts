@@ -1,39 +1,38 @@
-import { action, computed, makeObservable, observable } from 'mobx';
+import { computed, makeObservable, observable } from 'mobx';
 import { TaskAgentInstance } from 'http/index';
-import { getInternalInfo, mapToExternalParams, mapToInternalTasks } from 'helpers/index';
+import { mapToExternalTask } from 'helpers/index';
 import { EditTaskFormEntity, TaskEntity } from 'domains/index';
 
-// type PrivateFields = '_task' | '_isTaskLoading' | '_taskId';
+type PrivateFields = '_isLoading' | '_task';
 
 export class AddTaskStore {
   constructor() {
-    makeObservable<this>(this, {
-      // _task: observable,
-      // _isTaskLoading: observable,
-      // _taskId: observable,
-      // getInputValue: action,
+    makeObservable<this, PrivateFields>(this, {
+      _isLoading: observable,
+      _task: observable,
+
       task: computed,
-      postTask: action,
+      isLoading: computed,
     });
-
-    // reaction(
-    //   () => this.taskId,
-    //   (): void => {
-    //     this.loadTask(this.taskId);
-    //   }
-    // );
   }
-  private _isTasksLoading = false;
-  get isTaskLoading(): boolean {
-    return this._isTasksLoading;
+  private _isLoading = false;
+  private _task: TaskEntity | null = null;
+  get isLoading(): boolean {
+    return this._isLoading;
+  }
+  get task(): TaskEntity | null {
+    return this._task;
   }
 
-  get task(): TaskEditFormEntity | undefined {
-    return this.task;
-  }
-  postTask = async (task: TaskEditFormEntity) => {
-    const res = await TaskAgentInstance.createTask(task);
-    console.log(res);
+  createTask = async (task: EditTaskFormEntity) => {
+    this._isLoading = true;
+    try {
+      await TaskAgentInstance.createTask(mapToExternalTask(task));
+    } catch {
+      alert('ERROR');
+    } finally {
+      this._isLoading = false;
+    }
   };
 }
 
