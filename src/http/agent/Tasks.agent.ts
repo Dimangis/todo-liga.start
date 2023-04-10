@@ -1,5 +1,13 @@
 import { BasicAgent } from './Basic.agent';
-import { GetAllTasksResponse, GetAllTasksQuery, UpdateTaskResponse, UpdateTaskRequest } from 'http/model';
+import {
+  GetAllTasksResponse,
+  GetAllTasksQuery,
+  UpdateTaskResponse,
+  UpdateTaskRequest,
+  GetTaskResponse,
+  CreateTaskRequest,
+  CreateTaskResponse,
+} from 'http/model';
 
 class TasksAgent extends BasicAgent {
   constructor() {
@@ -22,6 +30,18 @@ class TasksAgent extends BasicAgent {
 
   async deleteTask(taskId: string): Promise<void> {
     await this._http.delete(`/tasks/${taskId}`);
+  }
+
+  async getTask(taskId: string): Promise<GetTaskResponse> {
+    const { data } = await this._http.get<GetTaskResponse>(`/tasks/${taskId}`);
+
+    return data;
+  }
+
+  async createTask(newData: CreateTaskRequest): Promise<CreateTaskResponse> {
+    const { data } = await this._http.post<CreateTaskResponse>(`/tasks`, newData);
+
+    return data;
   }
 }
 

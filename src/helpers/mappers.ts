@@ -1,6 +1,6 @@
-import { GetAllTasksQuery, GetAllTasksResponse } from 'http/index';
+import { GetAllTasksQuery, GetAllTasksResponse, GetTaskResponse } from 'http/index';
 import { FILTER_TYPES } from 'constants/index';
-import { TaskEntity, SearchFormEntity, TasksStatsEntity } from 'domains/index';
+import { TaskEntity, SearchFormEntity, TasksStatsEntity, TaskEditFormEntity } from 'domains/index';
 
 export const mapToExternalParams = (params?: SearchFormEntity): GetAllTasksQuery | undefined => {
   if (!params) return undefined;
@@ -54,5 +54,14 @@ export const getInternalInfo = (tasks: GetAllTasksResponse): TasksStatsEntity =>
   return {
     total,
     ...anotherStats,
+  };
+};
+
+export const mapToInternalTaskEdit = (task: GetTaskResponse): TaskEditFormEntity => {
+  return {
+    name: task.name || 'Неизвестно',
+    info: task.info || 'Неизвестно',
+    isImportant: task.isImportant || false,
+    isDone: task.isCompleted || false,
   };
 };
