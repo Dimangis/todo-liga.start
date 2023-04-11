@@ -1,4 +1,4 @@
-import { action, computed, makeObservable, observable } from 'mobx';
+import { action, computed, makeObservable, observable, runInAction } from 'mobx';
 import { TaskAgentInstance } from 'http/index';
 import { SearchFormEntity, TaskEntity, TasksStatsEntity } from 'domains/index';
 import { getInternalInfo, mapToExternalParams, mapToInternalTasks } from 'helpers/index';
@@ -66,14 +66,19 @@ export class TasksStore {
       if (searchParams) this._searchForm = searchParams;
 
       const { tasks, tasksStats } = await this.getTasks(this._searchForm);
-
-      this._tasks = tasks;
-      this._tasksStats = tasksStats;
+      runInAction(() => {
+        this._tasks = tasks;
+        this._tasksStats = tasksStats;
+      });
     } catch {
-      this._tasks = null;
-      this._tasksStats = null;
+      runInAction(() => {
+        this._tasks = null;
+        this._tasksStats = null;
+      });
     } finally {
-      this._isTasksLoading = false;
+      runInAction(() => {
+        this._isTasksLoading = false;
+      });
     }
   };
 
@@ -87,13 +92,19 @@ export class TasksStore {
 
       const { tasks, tasksStats } = await this.getTasks(this._searchForm);
 
-      this._tasks = tasks;
-      this._tasksStats = tasksStats;
+      runInAction(() => {
+        this._tasks = tasks;
+        this._tasksStats = tasksStats;
+      });
     } catch {
-      this._tasks = null;
-      this._tasksStats = null;
+      runInAction(() => {
+        this._tasks = null;
+        this._tasksStats = null;
+      });
     } finally {
-      this._isTasksLoading = false;
+      runInAction(() => {
+        this._isTasksLoading = false;
+      });
     }
   };
 
@@ -108,13 +119,19 @@ export class TasksStore {
 
       const { tasks, tasksStats } = await this.getTasks(this._searchForm);
 
-      this._tasks = tasks;
-      this._tasksStats = tasksStats;
+      runInAction(() => {
+        this._tasks = tasks;
+        this._tasksStats = tasksStats;
+      });
     } catch {
-      this._tasks = null;
-      this._tasksStats = null;
+      runInAction(() => {
+        this._tasks = null;
+        this._tasksStats = null;
+      });
     } finally {
-      this._isTasksLoading = false;
+      runInAction(() => {
+        this._isTasksLoading = false;
+      });
     }
   };
 
@@ -125,13 +142,19 @@ export class TasksStore {
       await TaskAgentInstance.deleteTask(taskId);
       const { tasks, tasksStats } = await this.getTasks(this._searchForm);
 
-      this._tasks = tasks;
-      this._tasksStats = tasksStats;
+      runInAction(() => {
+        this._tasks = tasks;
+        this._tasksStats = tasksStats;
+      });
     } catch {
-      this._tasks = null;
-      this._tasksStats = null;
+      runInAction(() => {
+        this._tasks = null;
+        this._tasksStats = null;
+      });
     } finally {
-      this._isTasksLoading = false;
+      runInAction(() => {
+        this._isTasksLoading = false;
+      });
     }
   };
 }

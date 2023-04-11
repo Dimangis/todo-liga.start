@@ -1,7 +1,6 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { TaskProps } from './Task.types';
 import './Task.css';
+import { TaskProps } from './Task.types';
 import { EDIT, ROOT } from 'constants/index';
 
 export function Task({ task, changeTaskImportance, deleteTask, changeTaskComplete }: TaskProps) {
@@ -16,12 +15,12 @@ export function Task({ task, changeTaskImportance, deleteTask, changeTaskComplet
   return (
     <div>
       <div className="task mb-2">
-        <p
+        <span
           className={`task__label ${isDone ? 'text-decoration-line-through text-secondary' : ''} ${
             isImportant ? 'text-success fw-bold' : ''
           }`}>
           {name}
-        </p>
+        </span>
 
         <div className="task__btns">
           <button
@@ -54,12 +53,12 @@ export function Task({ task, changeTaskImportance, deleteTask, changeTaskComplet
           </Link>
         </div>
       </div>
-      <p
+      <span
         className={`${isDone ? 'text-decoration-line-through text-secondary' : ''} ${
           isImportant ? 'text-success fw-bold' : ''
         }`}>
         {info}
-      </p>
+      </span>
     </div>
   );
 }

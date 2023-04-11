@@ -1,4 +1,4 @@
-import { computed, makeObservable, observable } from 'mobx';
+import { computed, makeObservable, observable, action, runInAction } from 'mobx';
 import { TaskAgentInstance } from 'http/index';
 import { mapToExternalTask } from 'helpers/index';
 import { EditTaskFormEntity, TaskEntity } from 'domains/index';
@@ -13,6 +13,8 @@ export class AddTaskStore {
 
       task: computed,
       isLoading: computed,
+
+      createTask: action,
     });
   }
   private _isLoading = false;
@@ -31,7 +33,9 @@ export class AddTaskStore {
     } catch {
       alert('ERROR');
     } finally {
-      this._isLoading = false;
+      runInAction(() => {
+        this._isLoading = false;
+      });
     }
   };
 }

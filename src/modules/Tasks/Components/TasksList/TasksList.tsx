@@ -26,7 +26,7 @@ function TasksListProto() {
             ))}
           </ul>
         ) : (
-          <p>Not found</p>
+          <span>Not found</span>
         )}
       </Loader>
     </div>

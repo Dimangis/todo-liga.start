@@ -1,4 +1,4 @@
-import { computed, makeObservable, observable, reaction } from 'mobx';
+import { computed, makeObservable, observable, reaction, runInAction, action } from 'mobx';
 import { TaskAgentInstance } from 'http/index';
 import { mapToExternalTask, mapToInternalTaskEdit } from 'helpers/index';
 import { EditTaskFormEntity, TaskEntity } from 'domains/index';
@@ -16,15 +16,17 @@ export class EditTaskStore {
       taskId: computed,
       isLoading: computed,
 
-      // getTask: action,
-      // updateTask: action,
+      updateTask: action,
+      getTask: action,
     });
 
     reaction(
       () => this.taskId,
       async (): Promise<void> => {
-        this._task = await this.getTask(this.taskId);
-        this._isLoading = false;
+        this.task = await this.getTask(this.taskId);
+        runInAction(() => {
+          this._isLoading = false;
+        });
       }
     );
   }
@@ -43,6 +45,9 @@ export class EditTaskStore {
   get task(): TaskEntity | null {
     return this._task;
   }
+  set task(task) {
+    this._task = task;
+  }
   getTask = async (taskId: string) => {
     const res = await TaskAgentInstance.getTask(taskId);
     return mapToInternalTaskEdit(res);
@@ -53,9 +58,13 @@ export class EditTaskStore {
     try {
       await TaskAgentInstance.updateTask(this._taskId, mapToExternalTask(task));
     } catch {
-      alert('ERROR');
+      runInAction(() => {
+        alert('ERROR');
+      });
     } finally {
-      this._isLoading = false;
+      runInAction(() => {
+        this._isLoading = false;
+      });
     }
   };
 }
